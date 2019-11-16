@@ -42,16 +42,15 @@ for line in FreqFileList:
     frequency = float(freqComponent[1].rstrip())
     FrequencyTable[letter] = frequency
 
-
-
+##Create search space for possible keys
 keySpace = []
 start = int('41', 16)
 end = int('7a', 16)
 for index in range(start, end + 1):
     keySpace.append(index)
 
+##Parse Hex into binary to operate on it
 cryptTextHex = "1b37373331363f78151b7f2b783431333d78397828372d363c78373e783a393b3736"
-
 cryptTextBin = base64.b16decode(cryptTextHex, True)
 
 def singleCharacterXorDecrypt(cryptText, binCharacter):
@@ -61,6 +60,8 @@ def singleCharacterXorDecrypt(cryptText, binCharacter):
         plainArray.append(byte ^ binCharacter)
     return plainArray
 
+
+##returns a dict with the character frequencies in it as percents of the text
 def getTextCharacterFrequency(text):
     textDict = {}
     length = len(text)
@@ -76,32 +77,35 @@ def getTextCharacterFrequency(text):
 
     return textDict
 
-
-
+##compares a text to standard english, heavily penalizes non text characters
 def compareCharFreq(textDict, referenceDict):
     distance = 0
-    for key in referenceDict:
+    for key in textDict:
         variance = 0
-        if key in textDict:
-            variance = abs(textDict[key] - referenceDict[key])
+        if key in referenceDict:
+            variance = abs((textDict[key] - referenceDict[key]))
         else:
-            variance = abs(referenceDict[key])
+            variance = 1
         distance += variance
 
     return distance
 
-closestMatch = "NULL"
-closestDistance = 999
-for key in keySpace:
-    plainBin = singleCharacterXorDecrypt(cryptTextHex, bytes(chr(key), 'utf-8')[0])
-    plainStr = str(plainBin, 'utf-8').lower().strip()
-    distance = compareCharFreq(getTextCharacterFrequency(plainStr),
-                               FrequencyTable)
-    if distance < closestDistance:
-        print("New closest match: " + chr(key) + " " + str(distance))
-        closestDistance = distance
-        closestMatch = chr(key)
+##Driver function to make it work
+def SolveSingleCharacterXorCipher():
+    closestMatch = "NULL"
+    closestDistance = 999
+    for key in keySpace:
+        plainBin = singleCharacterXorDecrypt(cryptTextHex, bytes(chr(key), 'utf-8')[0])
+        plainStr = str(plainBin, 'utf-8').lower().strip()
+        distance = compareCharFreq(getTextCharacterFrequency(plainStr),FrequencyTable)
 
-plainBin = singleCharacterXorDecrypt(cryptTextHex, bytes(closestMatch, 'utf-8')[0])
-plainStr = str(plainBin, 'utf-8').lower().strip()
-print(plainStr)
+        if distance < closestDistance:
+            print("New closest match: " + chr(key) + " " + str(distance))
+            closestDistance = distance
+            closestMatch = chr(key)
+
+        plainBin = singleCharacterXorDecrypt(cryptTextHex, bytes(closestMatch, 'utf-8')[0])
+        plainStr = str(plainBin, 'utf-8').lower().strip()
+        print(plainStr)
+
+###Set 1 Challenge 4###
