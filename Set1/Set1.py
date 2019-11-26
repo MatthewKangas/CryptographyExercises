@@ -110,7 +110,7 @@ def SolveSingleCharacterXorCipherCh3():
 
 ###Set 1 Challenge 4###
 
-def SolveSingleCharacterXorCipher(cipherText):
+def SolveSingleCharacterXorCipher(cipherText, Fuzzy):
     closestMatch = "NULL"
     closestDistance = 999
     plainStr = ""
@@ -124,14 +124,18 @@ def SolveSingleCharacterXorCipher(cipherText):
         distance = compareCharFreq(getTextCharacterFrequency(plainStr),FrequencyTable)
 
         if distance < closestDistance:
-            print("New closest match: " + chr(key) + " " + str(distance))
+            #print("New closest match: " + chr(key) + " " + str(distance))
             closestDistance = distance
             closestMatch = chr(key)
 
     plainBin = singleCharacterXorDecrypt(cipherText, bytes(closestMatch, 'utf-8')[0])
     plainStr = str(plainBin, 'utf-8').lower().strip()
-    print(cipherText)
-    print(plainStr)
+    if(Fuzzy or closestDistance < 8):
+        print("Found: " + plainStr)
+        print("From: " + str(cipherText))
+        print("With key: " + closestMatch)
+
+
 
 CipherTextFile = open("Challenge4.txt", "r")
 CipherTextList = CipherTextFile.readlines()
@@ -139,9 +143,8 @@ for line in CipherTextList:
     #print(line)
     CipherTextBin = base64.b16decode(line.rstrip(), True)
     try:
-        #SolveSingleCharacterXorCipher(CipherTextBin)
-        solution = singleCharacterXorDecrypt(CipherTextBin, bytes('5', 'utf-8')[0])
-        print(solution)
-    except:
+        SolveSingleCharacterXorCipher(CipherTextBin, False)
+        #solution = singleCharacterXorDecrypt(CipherTextBin, bytes('5', 'utf-8')[0])
+    except(UnicodeDecodeError):
         tries = 0
         #print("bad key")
