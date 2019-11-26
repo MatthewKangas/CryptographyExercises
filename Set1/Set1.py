@@ -44,7 +44,7 @@ for line in FreqFileList:
 
 ##Create search space for possible keys
 keySpace = []
-start = int('41', 16)
+start = int('30', 16)
 end = int('7a', 16)
 for index in range(start, end + 1):
     keySpace.append(index)
@@ -53,7 +53,7 @@ for index in range(start, end + 1):
 cryptTextHex = "1b37373331363f78151b7f2b783431333d78397828372d363c78373e783a393b3736"
 cryptTextBin = base64.b16decode(cryptTextHex, True)
 
-def singleCharacterXorDecrypt(cryptText, binCharacter):
+def singleCharacterXorDecrypt(cryptTextBin, binCharacter):
     cryptArray = bytearray(cryptTextBin)
     plainArray = bytearray()
     for byte in cryptArray:
@@ -91,7 +91,7 @@ def compareCharFreq(textDict, referenceDict):
     return distance
 
 ##Driver function to make it work
-def SolveSingleCharacterXorCipher():
+def SolveSingleCharacterXorCipherCh3():
     closestMatch = "NULL"
     closestDistance = 999
     for key in keySpace:
@@ -109,3 +109,39 @@ def SolveSingleCharacterXorCipher():
         print(plainStr)
 
 ###Set 1 Challenge 4###
+
+def SolveSingleCharacterXorCipher(cipherText):
+    closestMatch = "NULL"
+    closestDistance = 999
+    plainStr = ""
+    Tries = 0
+    for key in keySpace:
+        #print("Try Number: " + str(Tries))
+        Tries += 1
+        plainBin = singleCharacterXorDecrypt(cipherText, bytes(chr(key), 'utf-8')[0])
+        plainStr = str(plainBin, 'utf-8').lower().strip()
+        #print(plainStr)
+        distance = compareCharFreq(getTextCharacterFrequency(plainStr),FrequencyTable)
+
+        if distance < closestDistance:
+            print("New closest match: " + chr(key) + " " + str(distance))
+            closestDistance = distance
+            closestMatch = chr(key)
+
+    plainBin = singleCharacterXorDecrypt(cipherText, bytes(closestMatch, 'utf-8')[0])
+    plainStr = str(plainBin, 'utf-8').lower().strip()
+    print(cipherText)
+    print(plainStr)
+
+CipherTextFile = open("Challenge4.txt", "r")
+CipherTextList = CipherTextFile.readlines()
+for line in CipherTextList:
+    #print(line)
+    CipherTextBin = base64.b16decode(line.rstrip(), True)
+    try:
+        #SolveSingleCharacterXorCipher(CipherTextBin)
+        solution = singleCharacterXorDecrypt(CipherTextBin, bytes('5', 'utf-8')[0])
+        print(solution)
+    except:
+        tries = 0
+        #print("bad key")
