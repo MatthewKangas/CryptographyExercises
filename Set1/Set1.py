@@ -136,15 +136,36 @@ def SolveSingleCharacterXorCipher(cipherText, Fuzzy):
         print("With key: " + closestMatch)
 
 
+def Challenge4():
+    CipherTextFile = open("Challenge4.txt", "r")
+    CipherTextList = CipherTextFile.readlines()
+    for line in CipherTextList:
+        #print(line)
+        CipherTextBin = base64.b16decode(line.rstrip(), True)
+        try:
+            SolveSingleCharacterXorCipher(CipherTextBin, False)
+            #solution = singleCharacterXorDecrypt(CipherTextBin, bytes('5', 'utf-8')[0])
+        except(UnicodeDecodeError):
+            tries = 0
+            #print("bad key")
 
-CipherTextFile = open("Challenge4.txt", "r")
-CipherTextList = CipherTextFile.readlines()
-for line in CipherTextList:
-    #print(line)
-    CipherTextBin = base64.b16decode(line.rstrip(), True)
-    try:
-        SolveSingleCharacterXorCipher(CipherTextBin, False)
-        #solution = singleCharacterXorDecrypt(CipherTextBin, bytes('5', 'utf-8')[0])
-    except(UnicodeDecodeError):
-        tries = 0
-        #print("bad key")
+
+
+
+###Set1 Challenge5###
+
+challenge5Key = "ICE"
+challenge5PlainText = "Burning 'em, if you ain't quick and nimble"
+challenge5EncryptedText = "0b3637272a2b2e63622c2e69692a23693a2a3c6324202d623d63343c2a26226324272765272"
+
+def populateKey(key, text):
+    fullKey = ""
+
+    while(len(fullKey) < len(text)):
+        fullKey += key
+
+    return fullKey
+
+fullKey = populateKey(challenge5Key, challenge5PlainText)
+
+print(fullKey)
