@@ -184,6 +184,15 @@ def XorDecryptFromHex(key, encryptedHex):
     text = str(textBin, 'utf-8')
     return text
 
+def encryptDecryptXor(key, text):
+    encrypted = XorEncryptFromText(key, text)
+    decrypted = XorDecryptFromHex(key, encrypted)
+
+    print(encrypted)
+    print(decrypted)
+
+    return True
+
 
 def Challenge5():
     encryptedText = XorEncryptFromText(challenge5Key,challenge5PlainText)
@@ -192,8 +201,9 @@ def Challenge5():
     print(XorDecryptFromHex(challenge5Key, encryptedText))
     print(XorDecryptFromHex(challenge5Key, challenge5EncryptedText))
 
-
-
+    encryptDecryptXor("Cats", "Hello this is a test string, These are special characters $%^&*()")
+    encryptDecryptXor("Cat?//s", "Hello this is a test string, These are special characters $%^&*()")
+    
 
 
 Challenge5()
