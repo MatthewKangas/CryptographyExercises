@@ -155,10 +155,10 @@ def Challenge4():
 ###Set1 Challenge5###
 
 challenge5Key = "ICE"
-challenge5PlainText = "Burning 'em, if you ain't quick and nimble"
-challenge5EncryptedText = "0b3637272a2b2e63622c2e69692a23693a2a3c6324202d623d63343c2a26226324272765272"
+challenge5PlainText = "Burning 'em, if you ain't quick and nimble\nI go crazy when I hear a cymbal"
+challenge5EncryptedText = "0b3637272a2b2e63622c2e69692a23693a2a3c6324202d623d63343c2a26226324272765272a282b2f20430a652e2c652a3124333a653e2b2027630c692b20283165286326302e27282f"
 
-def populateKey(key, text):
+def PopulateKey(key, text):
     fullKey = ""
 
     while(len(fullKey) < len(text)):
@@ -166,6 +166,34 @@ def populateKey(key, text):
 
     return fullKey
 
-fullKey = populateKey(challenge5Key, challenge5PlainText)
 
-print(fullKey)
+def XorEncryptFromText(key, text):
+    fullKey = PopulateKey(key, text)
+    fullKeyBin = bytes(fullKey, 'utf-8')
+    textBin = bytes(text, 'utf-8')
+
+    encryptedBin = fixedXor(textBin, fullKeyBin)
+    encryptedHex = base64.b16encode(encryptedBin).lower().strip()
+    return str(encryptedHex, 'utf-8')
+
+def XorDecryptFromHex(key, encryptedHex):
+    encryptedBin = base64.b16decode(encryptedHex, True)
+    fullKey = PopulateKey(key, str(encryptedBin, 'utf-8'))
+    fullKeyBin = bytes(fullKey, 'utf-8')
+    textBin = fixedXor(encryptedBin, fullKeyBin)
+    text = str(textBin, 'utf-8')
+    return text
+
+
+def Challenge5():
+    encryptedText = XorEncryptFromText(challenge5Key,challenge5PlainText)
+    print(encryptedText)
+    print(challenge5EncryptedText)
+    print(XorDecryptFromHex(challenge5Key, encryptedText))
+    print(XorDecryptFromHex(challenge5Key, challenge5EncryptedText))
+
+
+
+
+
+Challenge5()
